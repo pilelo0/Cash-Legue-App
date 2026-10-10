@@ -193,7 +193,7 @@ export const GAMES: GameMeta[] = [
     sala: 'destreza',
     banner: 'https://images.pexels.com/photos/269630/pexels-photo-269630.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
     icon: '🃏',
-    color: 'from-red-700 to-darkred-900',
+    color: 'from-red-700 to-red-900',
     descripcion: 'Poker y juegos de cartas 1v1',
   },
 ];

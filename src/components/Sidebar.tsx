@@ -1,6 +1,6 @@
-import { Home, Gamepad2, History, Wallet, ChevronLeft, ChevronRight, Trophy, Swords, Brain } from 'lucide-react';
+import { Home, Gamepad2, History, Wallet, ChevronLeft, ChevronRight, Trophy, Swords, Brain, UserCircle } from 'lucide-react';
 
-export type ViewKey = 'lobby' | 'mis-partidas' | 'historial' | 'depositos';
+export type ViewKey = 'lobby' | 'mis-partidas' | 'historial' | 'depositos' | 'perfil';
 
 interface SidebarProps {
   currentView: ViewKey;
@@ -14,6 +14,7 @@ const NAV_ITEMS: { key: ViewKey; label: string; icon: typeof Home }[] = [
   { key: 'mis-partidas', label: 'Mis Partidas', icon: Gamepad2 },
   { key: 'historial', label: 'Historial', icon: History },
   { key: 'depositos', label: 'Depositos / Retiros', icon: Wallet },
+  { key: 'perfil', label: 'Mi Perfil Gamer', icon: UserCircle },
 ];
 
 export default function Sidebar({ currentView, onNavigate, collapsed, onToggleCollapse }: SidebarProps) {

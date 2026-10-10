@@ -46,8 +46,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         .from('usuarios')
         .insert({
           username,
-          balance_clp: 50000,
-          balance_usd: 50,
+          balance_clp: 142000,
+          balance_usd: 142,
         })
         .select('*')
         .single();

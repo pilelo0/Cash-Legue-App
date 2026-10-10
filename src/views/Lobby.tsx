@@ -230,7 +230,9 @@ export default function Lobby({ onEnterMatch }: LobbyProps) {
         </div>
       )}
 
-      {level === 'portals' && <PortalSelection onSelectSala={handleSelectSala} />}
+      {level === 'portals' && (
+        <PortalSelection onSelectSala={handleSelectSala} onSelectGame={handleSelectGame} />
+      )}
 
       {level === 'games' && sala && (
         <GameGrid
