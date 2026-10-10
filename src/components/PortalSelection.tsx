@@ -1,4 +1,5 @@
-import { Swords, Brain, ArrowRight, Users, Trophy, Zap, Crown, Radio } from 'lucide-react';
+import { useRef } from 'react';
+import { Swords, Brain, ArrowRight, Users, Trophy, Zap, Crown, Radio, Eye, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import type { SalaKey, GameMeta } from '@/lib/types';
 import { SALA_GAMING_IMAGE, SALA_DESTREZA_IMAGE } from '@/lib/types';
 import TournamentCard from '@/components/TournamentCard';
@@ -10,7 +11,48 @@ interface PortalSelectionProps {
   onSelectGame: (game: GameMeta) => void;
 }
 
+const PROMOTED_STREAMS = [
+  {
+    id: 1,
+    streamer: 'ProGamer_CL',
+    title: 'FINAL COPA CHILE - Semifinal 1v1',
+    viewers: '12,483',
+    badge: 'EN VIVO DESTACADO',
+    avatar: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&h=150&w=150',
+    thumb: 'https://images.pexels.com/photos/7915226/pexels-photo-7915226.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  },
+  {
+    id: 2,
+    streamer: 'PixelWarrior',
+    title: 'Subiendo Rango | Desafio Boveda $50 USD',
+    viewers: '1,250',
+    badge: 'ALGORITMO ORGANICO CL',
+    avatar: 'https://images.pexels.com/photos/1043471/pexels-photo-1043471.jpeg?auto=compress&cs=tinysrgb&h=150&w=150',
+    thumb: 'https://images.pexels.com/photos/9072394/pexels-photo-9072394.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  },
+  {
+    id: 3,
+    streamer: 'NeoFighter',
+    title: 'Practicando Combos | Torneo Semanal',
+    viewers: '840',
+    badge: 'NUEVO TALENTO',
+    avatar: 'https://images.pexels.com/photos/1681010/pexels-photo-1681010.jpeg?auto=compress&cs=tinysrgb&h=150&w=150',
+    thumb: 'https://images.pexels.com/photos/18512919/pexels-photo-18512919.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+  },
+];
+
 export default function PortalSelection({ onSelectSala, onSelectGame }: PortalSelectionProps) {
+  const streamRef = useRef<HTMLDivElement>(null);
+
+  const scrollStreams = (direction: 'left' | 'right') => {
+    if (streamRef.current) {
+      streamRef.current.scrollBy({
+        left: direction === 'left' ? -350 : 350,
+        behavior: 'smooth',
+      });
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* TRIPLE HERO BANNER */}
@@ -176,6 +218,83 @@ export default function PortalSelection({ onSelectSala, onSelectGame }: PortalSe
             </div>
           </div>
         </button>
+      </div>
+
+      {/* SCROLLABLE STREAMS CAROUSEL */}
+      <div className="bg-[#141418] border border-[#D4AF37]/30 rounded-2xl p-5">
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
+              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
+              EN VIVO
+            </h3>
+            <p className="text-[10px] text-neutral-500 mt-0.5">
+              El algoritmo de Cash League premia a nuevos talentos
+            </p>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => scrollStreams('left')}
+              className="neon-gold-arrow w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+            >
+              <ChevronLeft size={16} />
+            </button>
+            <button
+              onClick={() => scrollStreams('right')}
+              className="neon-gold-arrow w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        </div>
+
+        <div
+          ref={streamRef}
+          className="flex gap-4 overflow-x-auto scrollbar-none scroll-smooth pb-2"
+        >
+          {PROMOTED_STREAMS.map((s) => (
+            <div
+              key={s.id}
+              className="min-w-[300px] h-64 relative rounded-xl overflow-hidden border border-[#D4AF37]/40 flex flex-col justify-between group shrink-0"
+            >
+              <img
+                src={s.thumb}
+                alt={s.title}
+                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-500"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-black/40 to-transparent" />
+
+              <div className="relative z-10 flex justify-between items-center p-3">
+                <span className="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded flex items-center gap-1">
+                  <Radio size={10} className="animate-pulse" /> EN VIVO
+                </span>
+                <span className="bg-black/70 text-neutral-300 text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
+                  <Eye size={10} /> {s.viewers}
+                </span>
+              </div>
+
+              <div className="relative z-10 space-y-2 p-4">
+                <span className="bg-[#FFC700] text-black text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wide">
+                  {s.badge}
+                </span>
+                <div className="flex items-center gap-2">
+                  <img
+                    src={s.avatar}
+                    alt={s.streamer}
+                    className="w-7 h-7 rounded-full border border-[#FFC700] object-cover"
+                  />
+                  <div>
+                    <h5 className="text-xs font-bold text-white">{s.streamer}</h5>
+                    <p className="text-[10px] text-neutral-300 truncate max-w-[220px]">{s.title}</p>
+                  </div>
+                </div>
+                <button className="green-gold-btn w-full py-2 rounded-lg text-xs uppercase flex items-center justify-center gap-2">
+                  <Play size={12} className="fill-black" /> Ver Transmision
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
