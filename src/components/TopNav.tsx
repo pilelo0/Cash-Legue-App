@@ -1,4 +1,4 @@
-import { Wallet, User, Plus, Menu } from 'lucide-react';
+import { Wallet, User, Plus, Menu, CreditCard } from 'lucide-react';
 import { useApp } from '@/lib/store';
 import { formatCLP, formatUSD } from '@/lib/types';
 
@@ -12,7 +12,7 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
   const { currentUser, allUsers, switchUser } = useApp();
 
   return (
-    <header className="sticky top-0 z-40 h-14 bg-[#0F0F12]/95 backdrop-blur-sm border-b border-neutral-800 flex items-center justify-between px-3 sm:px-4">
+    <header className="sticky top-0 z-40 h-14 bg-[#0A0A0C]/95 backdrop-blur-md border-b border-[#D4AF37]/40 flex items-center justify-between px-3 sm:px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
@@ -20,22 +20,37 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
         >
           <Menu size={22} />
         </button>
-        <div className="flex items-center gap-2">
-          <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-[#FFC700] to-amber-600">
-            <span className="text-black font-black text-sm">CL</span>
+
+        {/* Isotipo 3D "CL" */}
+        <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#FFC700] via-[#D4AF37] to-[#805F13] p-[2px] shadow-[0_0_15px_rgba(255,199,0,0.35)] group">
+          <div className="w-full h-full bg-[#0A0A0C] rounded-[9px] flex items-center justify-center border border-[#FFC700]/30 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none" />
+            <span className="text-[#FFC700] font-black text-xl tracking-tighter drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+              CL
+            </span>
           </div>
-          <span className="hidden sm:block text-white font-bold text-lg tracking-tight">
-            Cash<span className="text-[#FFC700]">League</span>
-          </span>
+        </div>
+
+        {/* Nombre y lema */}
+        <div className="hidden sm:block">
+          <div className="flex items-center gap-1.5">
+            <h1 className="font-black text-lg text-white tracking-wider leading-none">
+              CashLeague
+            </h1>
+            <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" title="Servidor Activo" />
+          </div>
+          <p className="text-[8px] text-[#D4AF37] font-extrabold tracking-[0.2em] uppercase mt-0.5 opacity-90">
+            JUEGA. COMPITE. PERTENECE.
+          </p>
         </div>
       </div>
 
       <div className="flex items-center gap-2 sm:gap-3">
         {currentUser && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-neutral-800/60 border border-neutral-700">
-            <Wallet size={16} className="text-[#FFC700]" />
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#141418] border border-[#FFC700]/40 shadow-inner">
+            <CreditCard size={16} className="text-[#FFC700]" />
             <div className="flex items-baseline gap-2">
-              <span className="text-sm font-semibold text-white tabular-nums">
+              <span className="text-sm font-bold text-white tabular-nums">
                 {formatCLP(currentUser.balance_clp)}
               </span>
               <span className="hidden sm:inline text-xs text-neutral-500 tabular-nums">
@@ -47,7 +62,7 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
 
         <button
           onClick={onDepositClick}
-          className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#FFC700] text-black font-semibold text-sm hover:bg-amber-400 transition-colors"
+          className="green-gold-btn flex items-center gap-1.5 px-3 py-2 rounded-xl font-black text-xs uppercase tracking-wider"
         >
           <Plus size={16} />
           <span className="hidden sm:inline">Cargar Saldo</span>

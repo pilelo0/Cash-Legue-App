@@ -1,15 +1,65 @@
-import { useRef } from 'react';
-import { Swords, Brain, ArrowRight, Users, Trophy, Zap, Crown, Radio, Eye, Play, ChevronLeft, ChevronRight } from 'lucide-react';
-import type { SalaKey, GameMeta } from '@/lib/types';
-import { SALA_GAMING_IMAGE, SALA_DESTREZA_IMAGE } from '@/lib/types';
-import TournamentCard from '@/components/TournamentCard';
-import LiveStreamWidget from '@/components/LiveStreamWidget';
+import { useState, useEffect, useCallback } from 'react';
+import { Crown, Swords, Brain, ArrowRight, Users, Trophy, Zap, Radio, Eye, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
+import type { SalaKey, GameMeta, Torneo } from '@/lib/types';
+import { SALA_GAMING_IMAGE, SALA_DESTREZA_IMAGE, formatCLP } from '@/lib/types';
 import LeaderboardWidget from '@/components/LeaderboardWidget';
 
 interface PortalSelectionProps {
   onSelectSala: (sala: SalaKey) => void;
   onSelectGame: (game: GameMeta) => void;
 }
+
+const FALLBACK_TOURNAMENTS: (Torneo & { imagen: string })[] = [
+  {
+    id: 'fb-1',
+    titulo: 'LIGA PREMIER EA SPORTS FC',
+    subtitulo: 'Campeonato Temporada 2026 - Division de Honor',
+    juego: 'EA Sports FC',
+    sala: 'gaming',
+    pozo: 750000,
+    entrada: 3000,
+    max_cupos: 128,
+    inscritos: 64,
+    estado: 'abierto',
+    fecha_inicio: null,
+    imagen: 'https://images.pexels.com/photos/40013103/pexels-photo-40013103.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    destacado: true,
+    creado_en: new Date().toISOString(),
+  },
+  {
+    id: 'fb-2',
+    titulo: 'COPA RELAMPAGO FORTNITE',
+    subtitulo: 'Eliminatoria Directa - Arena Modo Cero Construccion',
+    juego: 'Fortnite',
+    sala: 'gaming',
+    pozo: 500000,
+    entrada: 2000,
+    max_cupos: 256,
+    inscritos: 89,
+    estado: 'abierto',
+    fecha_inicio: null,
+    imagen: 'https://images.pexels.com/photos/18512919/pexels-photo-18512919.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    destacado: true,
+    creado_en: new Date().toISOString(),
+  },
+  {
+    id: 'fb-3',
+    titulo: 'VALORANT MASTERS CASH LEAGUE',
+    subtitulo: 'Clasificatorio Regional Latinoamerica',
+    juego: 'Valorant',
+    sala: 'gaming',
+    pozo: 1200000,
+    entrada: 5000,
+    max_cupos: 64,
+    inscritos: 12,
+    estado: 'abierto',
+    fecha_inicio: null,
+    imagen: 'https://images.pexels.com/photos/7915226/pexels-photo-7915226.jpeg?auto=compress&cs=tinysrgb&h=650&w=940',
+    destacado: true,
+    creado_en: new Date().toISOString(),
+  },
+];
 
 const PROMOTED_STREAMS = [
   {
@@ -41,261 +91,245 @@ const PROMOTED_STREAMS = [
   },
 ];
 
-export default function PortalSelection({ onSelectSala, onSelectGame }: PortalSelectionProps) {
-  const streamRef = useRef<HTMLDivElement>(null);
+export default function PortalSelection({ onSelectSala }: PortalSelectionProps) {
+  const [tournaments, setTournaments] = useState<(Torneo & { imagen: string })[]>(FALLBACK_TOURNAMENTS);
+  const [tournamentIdx, setTournamentIdx] = useState(0);
+  const [streamIdx, setStreamIdx] = useState(0);
 
-  const scrollStreams = (direction: 'left' | 'right') => {
-    if (streamRef.current) {
-      streamRef.current.scrollBy({
-        left: direction === 'left' ? -350 : 350,
-        behavior: 'smooth',
-      });
+  const loadTournaments = useCallback(async () => {
+    const { data } = await supabase
+      .from('torneos')
+      .select('*')
+      .order('creado_en', { ascending: true })
+      .limit(5);
+    if (data && data.length > 0) {
+      setTournaments(data as (Torneo & { imagen: string })[]);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    loadTournaments();
+    const channel = supabase
+      .channel('portal_tournaments_rt')
+      .on('postgres_changes', { event: '*', schema: 'public', table: 'torneos' }, () => loadTournaments())
+      .subscribe();
+    return () => { supabase.removeChannel(channel); };
+  }, [loadTournaments]);
+
+  const currTournament = tournaments[tournamentIdx] ?? FALLBACK_TOURNAMENTS[0];
+  const currStream = PROMOTED_STREAMS[streamIdx];
+
+  const nextTournament = () => setTournamentIdx((p) => (p === tournaments.length - 1 ? 0 : p + 1));
+  const prevTournament = () => setTournamentIdx((p) => (p === 0 ? tournaments.length - 1 : p - 1));
+  const nextStream = () => setStreamIdx((p) => (p === PROMOTED_STREAMS.length - 1 ? 0 : p + 1));
+  const prevStream = () => setStreamIdx((p) => (p === 0 ? PROMOTED_STREAMS.length - 1 : p - 1));
 
   return (
     <div className="space-y-6">
-      {/* TRIPLE HERO BANNER */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 h-auto lg:h-72">
-        {/* Cuadro 1 - Torneo Destacado */}
-        <div className="h-64 lg:h-full">
-          <TournamentCard />
+      {/* TRIPLE HERO: Tournament Card + Live Stream + Leaderboard */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* 1. TARJETA DE TORNEO CON FLECHAS FLOTANTES */}
+        <div className="relative bg-[#141418] border border-[#D4AF37]/40 rounded-2xl overflow-hidden h-[390px] group shadow-2xl flex flex-col justify-between p-5">
+          <img src={currTournament.imagen} alt="Torneo" className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition duration-700" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/70 to-transparent" />
+
+          {/* Flechas flotantes */}
+          <button onClick={prevTournament} className="overlay-arrow-btn left-3" title="Anterior torneo">
+            <ChevronLeft size={20} />
+          </button>
+          <button onClick={nextTournament} className="overlay-arrow-btn right-3" title="Siguiente torneo">
+            <ChevronRight size={20} />
+          </button>
+
+          <div className="relative z-10 flex justify-between items-center">
+            <span className="bg-[#FFC700] text-black text-[10px] font-black px-2.5 py-1 rounded uppercase tracking-wider flex items-center gap-1">
+              <Crown size={12} /> TORNEO DESTACADO ({tournamentIdx + 1}/{tournaments.length})
+            </span>
+          </div>
+
+          <div className="relative z-10 space-y-3 mt-auto">
+            <h3 className="text-xl font-black text-white leading-tight">{currTournament.titulo}</h3>
+            <p className="text-xs text-neutral-400">{currTournament.subtitulo}</p>
+
+            <div className="bg-[#0A0A0C]/90 backdrop-blur-md p-3 rounded-xl border border-[#D4AF37]/30 flex justify-between items-center">
+              <div>
+                <p className="text-[10px] text-neutral-400 uppercase font-bold">Pozo acumulado</p>
+                <p className="text-lg font-black text-[#FFC700]">{formatCLP(currTournament.pozo)}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-[10px] text-neutral-400 uppercase font-bold">Entrada</p>
+                <p className="text-xs font-extrabold text-white">{formatCLP(currTournament.entrada)}</p>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 text-[10px] text-neutral-400">
+              <Users size={11} className="text-[#FFC700]" />
+              <span>{currTournament.inscritos}/{currTournament.max_cupos} inscritos</span>
+              <div className="flex-1 h-1.5 bg-neutral-800 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#FFC700] to-amber-400 rounded-full"
+                  style={{ width: `${Math.min(100, (currTournament.inscritos / currTournament.max_cupos) * 100)}%`, boxShadow: '0 0 8px rgba(255,199,0,0.5)' }}
+                />
+              </div>
+            </div>
+
+            <button
+              onClick={() => onSelectSala('gaming')}
+              className="green-gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider"
+            >
+              Inscribirse Ahora
+            </button>
+          </div>
         </div>
 
-        {/* Cuadro 2 - Live Stream */}
-        <div className="h-64 lg:h-full">
-          <LiveStreamWidget />
+        {/* 2. TARJETA EN VIVO CON FLECHAS FLOTANTES */}
+        <div className="relative bg-[#141418] border border-[#D4AF37]/40 rounded-2xl overflow-hidden h-[390px] group shadow-2xl flex flex-col justify-between p-5">
+          <img src={currStream.thumb} alt="Stream" className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-105 transition duration-700" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/70 to-transparent" />
+
+          <button onClick={prevStream} className="overlay-arrow-btn left-3" title="Anterior transmision">
+            <ChevronLeft size={20} />
+          </button>
+          <button onClick={nextStream} className="overlay-arrow-btn right-3" title="Siguiente transmision">
+            <ChevronRight size={20} />
+          </button>
+
+          <div className="relative z-10 flex justify-between items-center">
+            <span className="bg-red-600 text-white text-[10px] font-black px-2.5 py-1 rounded flex items-center gap-1">
+              <Radio size={11} className="animate-pulse" /> EN VIVO ({streamIdx + 1}/{PROMOTED_STREAMS.length})
+            </span>
+            <span className="bg-black/80 backdrop-blur-md text-neutral-300 text-[10px] font-bold px-2 py-1 rounded border border-neutral-700 flex items-center gap-1">
+              <Eye size={10} /> {currStream.viewers}
+            </span>
+          </div>
+
+          <div className="relative z-10 space-y-3 mt-auto">
+            <span className="bg-[#FFC700]/20 border border-[#FFC700] text-[#FFC700] text-[9px] font-black px-2 py-0.5 rounded uppercase">
+              {currStream.badge}
+            </span>
+            <div className="flex items-center gap-3">
+              <img src={currStream.avatar} alt={currStream.streamer} className="w-8 h-8 rounded-full border-2 border-[#FFC700]" />
+              <div>
+                <h4 className="text-sm font-black text-white">{currStream.streamer}</h4>
+                <p className="text-xs text-neutral-300 line-clamp-1">{currStream.title}</p>
+              </div>
+            </div>
+            <button className="green-gold-btn w-full py-3 rounded-xl text-xs uppercase tracking-wider flex items-center justify-center gap-2">
+              <Play size={14} className="fill-black" /> Ver Transmision
+            </button>
+          </div>
         </div>
 
-        {/* Cuadro 3 - Leaderboard */}
-        <div className="h-64 lg:h-full sm:col-span-2 lg:col-span-1">
+        {/* 3. TOP JUGADORES */}
+        <div className="h-[390px]">
           <LeaderboardWidget />
         </div>
       </div>
 
-      {/* Section title */}
-      <div className="text-center pt-2">
-        <h1 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-          Elige tu <span className="text-[#FFC700]">Arena</span>
-        </h1>
-        <p className="text-sm text-neutral-500 mt-2">
-          Selecciona una sala para comenzar a competir y ganar dinero real
-        </p>
-      </div>
+      {/* SECCION: ELIGE TU ARENA */}
+      <section className="pt-10 pb-6 border-t border-[#D4AF37]/20 mt-8">
+        <div className="text-center space-y-3 mb-8">
+          <div className="inline-block bg-gradient-to-r from-[#FFC700] to-[#D4AF37] p-[1px] rounded-full">
+            <span className="bg-[#0A0A0C] text-[#FFC700] text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest block">
+              COMPETICION EN TIEMPO REAL
+            </span>
+          </div>
+          <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">
+            Elige tu <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FFC700] via-[#E5C158] to-[#FFC700]">Arena</span>
+          </h2>
+          <p className="text-xs md:text-sm text-neutral-400 max-w-lg mx-auto">
+            Selecciona una sala oficial para comenzar a competir y ganar dinero real con la maxima seguridad.
+          </p>
+        </div>
 
-      {/* ARENA 1 - Full Width - Torneos Activos */}
-      <button
-        onClick={() => onSelectSala('gaming')}
-        className="group relative w-full overflow-hidden rounded-3xl border border-[#FFC700]/20 hover:border-[#FFC700]/50 transition-all duration-500 text-left
-          hover:shadow-[0_0_40px_rgba(255,199,0,0.15)] hover:scale-[1.005]
-          before:absolute before:inset-0 before:bg-gradient-to-r before:from-[#FFC700]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:pointer-events-none"
-      >
-        <div className="relative h-40 sm:h-48 overflow-hidden">
-          <img
-            src="https://images.pexels.com/photos/36899796/pexels-photo-36899796.jpeg?auto=compress&cs=tinysrgb&h=650&w=940"
-            alt="Torneos Activos"
-            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0C] via-[#0A0A0C]/60 to-transparent" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-transparent to-transparent" />
-
-          <div className="absolute inset-0 flex items-center px-6 sm:px-10">
-            <div className="flex items-center gap-4">
-              <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#FFC700]/15 backdrop-blur-md border border-[#FFC700]/30 group-hover:border-[#FFC700]/50 group-hover:bg-[#FFC700]/20 transition-all duration-300">
+        {/* SALAS DE JUEGO */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* SALA DE TORNEOS ACTIVOS */}
+          <button
+            onClick={() => onSelectSala('gaming')}
+            className="bg-gradient-to-br from-[#141418] to-[#0A0A0C] border-2 border-[#D4AF37] rounded-2xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-[0_0_35px_rgba(212,175,55,0.3)] transition duration-500 text-left"
+          >
+            <div className="flex justify-between items-start mb-5">
+              <div className="w-14 h-14 rounded-2xl bg-[#FFC700]/10 border border-[#FFC700] flex items-center justify-center">
                 <Crown size={28} className="text-[#FFC700]" />
               </div>
-              <div className="space-y-1">
-                <div className="flex items-center gap-2">
-                  <span className="w-2 h-2 rounded-full bg-[#FFC700] animate-pulse" />
-                  <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">SALA DE TORNEOS ACTIVOS</h2>
-                </div>
-                <p className="text-xs sm:text-sm text-[#FFC700] font-semibold tracking-wide uppercase">Copas masivas y ligas con pozos acumulados</p>
-              </div>
+              <span className="bg-[#FFC700] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                3 Torneos Activos
+              </span>
             </div>
 
-            <div className="ml-auto hidden sm:flex items-center gap-6">
-              <div className="text-center">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-wide">Torneos Activos</p>
-                <p className="text-2xl font-black text-[#FFC700]">3</p>
-              </div>
-              <div className="text-center">
-                <p className="text-[10px] text-neutral-500 uppercase tracking-wide">Pozo Total</p>
-                <p className="text-lg font-black text-white">$2.2M</p>
-              </div>
-              <div className="flex items-center gap-2 text-[#FFC700] font-bold text-sm">
-                <span>Entrar</span>
-                <ArrowRight size={18} className="transition-transform group-hover:translate-x-1.5" />
-              </div>
-            </div>
-          </div>
-        </div>
-      </button>
+            <h3 className="text-xl sm:text-2xl font-black text-white">SALA DE TORNEOS ACTIVOS</h3>
+            <p className="text-xs text-[#FFC700] font-bold mt-1 uppercase tracking-wide">Copas masivas y ligas con pozos acumulados</p>
+            <p className="text-xs text-neutral-400 mt-2 leading-relaxed">Enfrentate a cientos de jugadores en llaves oficiales verificadas por IA.</p>
 
-      {/* ARENA 2 & 3 - Side by side */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Arena 2 - Sala Gaming */}
-        <button
-          onClick={() => onSelectSala('gaming')}
-          className="group relative overflow-hidden rounded-3xl border border-neutral-800 hover:border-[#FFC700]/50 transition-all duration-500 text-left
-            hover:shadow-[0_0_30px_rgba(255,199,0,0.12)] hover:scale-[1.01]
-            before:absolute before:inset-0 before:bg-gradient-to-br before:from-[#FFC700]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:pointer-events-none"
-        >
-          <div className="relative h-64 overflow-hidden">
-            <img
-              src={SALA_GAMING_IMAGE}
-              alt="Sala Gaming"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#FFC700]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute inset-0 backdrop-blur-[2px] group-hover:backdrop-blur-0 transition-all duration-500" />
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2.5">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 group-hover:border-[#FFC700]/40 group-hover:bg-[#FFC700]/10 transition-all duration-300">
-                <Swords size={22} className="text-[#FFC700]" />
-              </div>
+            <div className="mt-6 flex justify-between items-end border-t border-neutral-800 pt-4">
               <div>
-                <h2 className="text-xl font-black text-white tracking-tight">SALA GAMING</h2>
-                <p className="text-[11px] text-[#FFC700] font-semibold tracking-wider uppercase">eSports & Competitivo</p>
+                <p className="text-[10px] text-neutral-500 font-bold uppercase">Pozo Total en Juego</p>
+                <p className="text-xl sm:text-2xl font-black text-white">$2.2M CLP</p>
+              </div>
+              <div className="green-gold-btn px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider font-black flex items-center gap-2">
+                Entrar a Torneos <ArrowRight size={14} />
               </div>
             </div>
-            <p className="text-xs text-neutral-400 max-w-sm">
-              Rocket League, Fortnite, Valorant, EA FC 24 y mas. Duelos 1v1 en vivo.
-            </p>
-            <div className="flex items-center gap-3 pt-1">
-              <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Trophy size={12} className="text-[#FFC700]" /><span>6 Juegos</span></div>
-              <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Zap size={12} className="text-[#FFC700]" /><span>1v1</span></div>
-              <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Radio size={12} className="text-[#FFC700]" /><span>En vivo</span></div>
-            </div>
-            <div className="flex items-center gap-1.5 pt-1 text-[#FFC700] font-bold text-xs">
-              <span>Entrar a la Sala</span>
-              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1.5" />
-            </div>
-          </div>
-        </button>
+          </button>
 
-        {/* Arena 3 - Sala Destreza */}
+          {/* SALA GAMING */}
+          <button
+            onClick={() => onSelectSala('gaming')}
+            className="bg-gradient-to-br from-[#141418] to-[#0A0A0C] border-2 border-[#D4AF37] rounded-2xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-[0_0_35px_rgba(255,199,0,0.2)] transition duration-500 text-left"
+          >
+            <div className="flex justify-between items-start mb-5">
+              <div className="w-14 h-14 rounded-2xl bg-[#FFC700]/10 border border-[#FFC700] flex items-center justify-center">
+                <Swords size={28} className="text-[#FFC700]" />
+              </div>
+              <span className="bg-[#00E676] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
+                Sala 1v1 en Vivo
+              </span>
+            </div>
+
+            <h3 className="text-xl sm:text-2xl font-black text-white">SALA GAMING</h3>
+            <p className="text-xs text-[#FFC700] font-bold mt-1 uppercase tracking-wide">eSports & Competitivo</p>
+            <p className="text-xs text-neutral-400 mt-2 leading-relaxed">Rocket League, Fortnite, Valorant, EA FC y mas. Duelos 1v1 en vivo.</p>
+
+            <div className="mt-6 flex justify-between items-end border-t border-neutral-800 pt-4">
+              <div className="flex items-center gap-3">
+                <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Trophy size={12} className="text-[#FFC700]" /><span>6 Juegos</span></div>
+                <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Zap size={12} className="text-[#FFC700]" /><span>1v1</span></div>
+              </div>
+              <div className="green-gold-btn px-5 py-2.5 rounded-xl text-xs uppercase tracking-wider font-black flex items-center gap-2">
+                Entrar a la Sala <ArrowRight size={14} />
+              </div>
+            </div>
+          </button>
+        </div>
+
+        {/* SALA DESTREZA - Full width */}
         <button
           onClick={() => onSelectSala('destreza')}
-          className="group relative overflow-hidden rounded-3xl border border-neutral-800 hover:border-[#FFC700]/50 transition-all duration-500 text-left
-            hover:shadow-[0_0_30px_rgba(255,199,0,0.12)] hover:scale-[1.01]
-            before:absolute before:inset-0 before:bg-gradient-to-br before:from-[#FFC700]/5 before:to-transparent before:opacity-0 hover:before:opacity-100 before:transition-opacity before:duration-500 before:pointer-events-none"
+          className="mt-6 w-full bg-gradient-to-br from-[#141418] to-[#0A0A0C] border-2 border-[#D4AF37] rounded-2xl p-6 sm:p-8 relative overflow-hidden group hover:shadow-[0_0_35px_rgba(212,175,55,0.3)] transition duration-500 text-left"
         >
-          <div className="relative h-64 overflow-hidden">
-            <img
-              src={SALA_DESTREZA_IMAGE}
-              alt="Sala Destreza"
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/50 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-br from-[#FFC700]/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            <div className="absolute inset-0 backdrop-blur-[2px] group-hover:backdrop-blur-0 transition-all duration-500" />
-          </div>
-
-          <div className="absolute bottom-0 left-0 right-0 p-5 space-y-2.5">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center justify-center w-11 h-11 rounded-2xl bg-white/5 backdrop-blur-md border border-white/10 group-hover:border-[#FFC700]/40 group-hover:bg-[#FFC700]/10 transition-all duration-300">
-                <Brain size={22} className="text-[#FFC700]" />
+          <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
+            <div className="flex items-start gap-4">
+              <div className="w-14 h-14 rounded-2xl bg-[#00E676]/10 border border-[#00E676] flex items-center justify-center shrink-0">
+                <Brain size={28} className="text-[#00E676]" />
               </div>
               <div>
-                <h2 className="text-xl font-black text-white tracking-tight">SALA DESTREZA</h2>
-                <p className="text-[11px] text-[#FFC700] font-semibold tracking-wider uppercase">Mente, Trivias & Estrategia</p>
+                <h3 className="text-xl sm:text-2xl font-black text-white">SALA DESTREZA</h3>
+                <p className="text-xs text-[#00E676] font-bold mt-1 uppercase tracking-wide">Mente, Trivias & Estrategia</p>
+                <p className="text-xs text-neutral-400 mt-2 leading-relaxed max-w-md">Ajedrez 3D, Damas, Sudoku, Trivias Masivas y Duelos de Cartas.</p>
+                <div className="flex items-center gap-3 mt-3">
+                  <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Trophy size={12} className="text-[#FFC700]" /><span>5 Disciplinas</span></div>
+                  <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Users size={12} className="text-[#FFC700]" /><span>1v1 y Masivo</span></div>
+                  <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Crown size={12} className="text-[#FFC700]" /><span>200+</span></div>
+                </div>
               </div>
             </div>
-            <p className="text-xs text-neutral-400 max-w-sm">
-              Ajedrez 3D, Damas, Sudoku, Trivias Masivas y Duelos de Cartas.
-            </p>
-            <div className="flex items-center gap-3 pt-1">
-              <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Trophy size={12} className="text-[#FFC700]" /><span>5 Disciplinas</span></div>
-              <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Users size={12} className="text-[#FFC700]" /><span>1v1 y Masivo</span></div>
-              <div className="flex items-center gap-1 text-[11px] text-neutral-500"><Crown size={12} className="text-[#FFC700]" /><span>200+</span></div>
-            </div>
-            <div className="flex items-center gap-1.5 pt-1 text-[#FFC700] font-bold text-xs">
-              <span>Entrar a la Sala</span>
-              <ArrowRight size={16} className="transition-transform group-hover:translate-x-1.5" />
+            <div className="green-gold-btn px-6 py-3 rounded-xl text-xs uppercase tracking-wider font-black flex items-center gap-2 self-end sm:self-center">
+              Entrar a Destreza <ArrowRight size={14} />
             </div>
           </div>
         </button>
-      </div>
-
-      {/* SCROLLABLE STREAMS CAROUSEL */}
-      <div className="bg-[#141418] border border-[#D4AF37]/30 rounded-2xl p-5">
-        <div className="flex items-center justify-between mb-4">
-          <div>
-            <h3 className="text-sm font-extrabold text-white flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-              EN VIVO
-            </h3>
-            <p className="text-[10px] text-neutral-500 mt-0.5">
-              El algoritmo de Cash League premia a nuevos talentos
-            </p>
-          </div>
-          <div className="flex gap-2">
-            <button
-              onClick={() => scrollStreams('left')}
-              className="neon-gold-arrow w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
-            >
-              <ChevronLeft size={16} />
-            </button>
-            <button
-              onClick={() => scrollStreams('right')}
-              className="neon-gold-arrow w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs"
-            >
-              <ChevronRight size={16} />
-            </button>
-          </div>
-        </div>
-
-        <div
-          ref={streamRef}
-          className="flex gap-4 overflow-x-auto scrollbar-none scroll-smooth pb-2"
-        >
-          {PROMOTED_STREAMS.map((s) => (
-            <div
-              key={s.id}
-              className="min-w-[300px] h-64 relative rounded-xl overflow-hidden border border-[#D4AF37]/40 flex flex-col justify-between group shrink-0"
-            >
-              <img
-                src={s.thumb}
-                alt={s.title}
-                className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-500"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-black/40 to-transparent" />
-
-              <div className="relative z-10 flex justify-between items-center p-3">
-                <span className="bg-red-600 text-white text-[9px] font-black px-2 py-0.5 rounded flex items-center gap-1">
-                  <Radio size={10} className="animate-pulse" /> EN VIVO
-                </span>
-                <span className="bg-black/70 text-neutral-300 text-[10px] px-2 py-0.5 rounded flex items-center gap-1">
-                  <Eye size={10} /> {s.viewers}
-                </span>
-              </div>
-
-              <div className="relative z-10 space-y-2 p-4">
-                <span className="bg-[#FFC700] text-black text-[9px] font-black px-2 py-0.5 rounded uppercase tracking-wide">
-                  {s.badge}
-                </span>
-                <div className="flex items-center gap-2">
-                  <img
-                    src={s.avatar}
-                    alt={s.streamer}
-                    className="w-7 h-7 rounded-full border border-[#FFC700] object-cover"
-                  />
-                  <div>
-                    <h5 className="text-xs font-bold text-white">{s.streamer}</h5>
-                    <p className="text-[10px] text-neutral-300 truncate max-w-[220px]">{s.title}</p>
-                  </div>
-                </div>
-                <button className="green-gold-btn w-full py-2 rounded-lg text-xs uppercase flex items-center justify-center gap-2">
-                  <Play size={12} className="fill-black" /> Ver Transmision
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      </section>
     </div>
   );
 }
