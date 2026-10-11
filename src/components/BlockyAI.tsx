@@ -75,28 +75,28 @@ export default function BlockyAI({ officialStats }: BlockyAIProps) {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-6 right-6 z-50 flex items-center gap-3">
       {isOpen && (
-        <div className="absolute bottom-24 right-0 w-80 md:w-96 h-[460px] bg-[#0A0A0C] border border-[#D4AF37]/50 rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-          <div className="bg-[#141418] border-b border-[#D4AF37]/30 p-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
+        <div className="absolute bottom-24 right-0 w-80 md:w-96 h-[460px] bg-[#070709] border-2 border-[#FFC700] rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.95)] flex flex-col overflow-hidden">
+          <div className="bg-[#14141C] border-b border-[#D4AF37]/50 p-3.5 flex items-center justify-between">
+            <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-full border border-[#FFC700] bg-black flex items-center justify-center">
                 <Bot size={16} className="text-[#FFC700]" />
               </div>
               <div>
-                <h4 className="text-[#FFC700] font-bold text-sm leading-none">BLOCKY AI</h4>
+                <h4 className="text-[#FFC700] font-black text-xs tracking-wider leading-none">BLOCKY AI - ARBITRO OFICIAL</h4>
                 <span className="text-[10px] text-neutral-400 font-medium">Arbitro & Boveda de Cash League</span>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-[#D4AF37] hover:text-white transition-colors"
+              className="text-white hover:text-[#FFC700] transition-colors font-bold"
             >
               <X size={18} />
             </button>
           </div>
 
-          <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#0A0A0C]">
+          <div ref={scrollRef} className="flex-1 p-4 overflow-y-auto space-y-3 bg-[#070709]">
             {messages.map((m, idx) => (
               <div
                 key={idx}
@@ -111,14 +111,14 @@ export default function BlockyAI({ officialStats }: BlockyAIProps) {
             ))}
           </div>
 
-          <div className="p-3 bg-[#141418] border-t border-[#D4AF37]/30 flex gap-2">
+          <div className="p-3 bg-[#14141C] border-t border-[#D4AF37]/50 flex gap-2">
             <input
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleSend()}
               placeholder="Preguntale a Blocky..."
-              className="flex-1 bg-[#0A0A0C] border border-neutral-800 focus:border-[#D4AF37] rounded-lg px-3 py-2 text-xs text-white outline-none transition-colors"
+              className="flex-1 bg-[#070709] border border-neutral-800 focus:border-[#FFC700] rounded-lg px-3 py-2 text-xs text-white outline-none transition-colors"
             />
             <button
               onClick={handleSend}
@@ -130,26 +130,25 @@ export default function BlockyAI({ officialStats }: BlockyAIProps) {
         </div>
       )}
 
+      {/* Permanent speech bubble */}
+      {showBubble && !isOpen && (
+        <div className="hidden md:flex bg-[#14141C] border border-[#FFC700] text-white text-xs font-bold px-4 py-2 rounded-2xl shadow-[0_0_20px_rgba(255,199,0,0.35)] animate-pulse items-center max-w-[200px]">
+          <span className="text-[#FFC700] mr-1">⚡</span> {SPEECH_TIPS[tipIdx]}
+        </div>
+      )}
+
       <button
         onClick={() => { setIsOpen(!isOpen); setShowBubble(false); }}
-        className="relative w-20 h-20 rounded-full bg-[#0A0A0C] border-2 border-[#FFC700] p-1 shadow-2xl hover:scale-105 flex items-center justify-center group transition-transform blocky-super-glow"
+        className="relative w-20 h-20 rounded-full bg-[#070709] border-2 border-[#FFC700] p-1 shadow-[0_0_30px_rgba(255,199,0,0.7)] flex items-center justify-center group transition-transform blocky-super-glow cursor-pointer"
         style={{ animation: 'blockyFloat 3.5s ease-in-out infinite, pulseGlow 2.5s infinite ease-in-out' }}
       >
         <div className="absolute inset-0 rounded-full bg-[#FFC700]/20 blur-md group-hover:blur-lg transition-all" />
-        <div className="w-full h-full rounded-full bg-gradient-to-br from-[#1A1A24] to-[#0A0A0C] flex flex-col items-center justify-center relative z-10 border border-[#FFC700]/40">
+        <div className="w-full h-full rounded-full bg-gradient-to-br from-[#1A1A26] to-[#070709] flex flex-col items-center justify-center relative z-10 border border-[#FFC700]/40">
           <Bot size={28} className="text-[#FFC700]" />
           <span className="text-[8px] font-black text-[#FFC700] tracking-tighter mt-0.5">BLOCKY</span>
         </div>
-        <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-[#0A0A0C] rounded-full z-20" />
+        <span className="absolute bottom-0 right-0 w-4 h-4 bg-[#00FF66] border-2 border-[#070709] rounded-full z-20 shadow-[0_0_10px_#00FF66]" />
       </button>
-
-      {showBubble && !isOpen && (
-        <div className="absolute bottom-6 right-24 w-56 bg-[#14141C] border border-[#FFC700]/50 rounded-2xl p-3 shadow-xl pointer-events-none">
-          <div className="absolute right-[-8px] bottom-6 w-4 h-4 bg-[#14141C] border-r border-b border-[#FFC700]/50 rotate-[-45deg]" />
-          <p className="text-[10px] text-[#FFC700] font-bold uppercase tracking-wider mb-1">Blocky dice:</p>
-          <p className="text-xs text-white leading-relaxed">{SPEECH_TIPS[tipIdx]}</p>
-        </div>
-      )}
     </div>
   );
 }

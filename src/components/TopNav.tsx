@@ -12,7 +12,7 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
   const { currentUser, allUsers, switchUser } = useApp();
 
   return (
-    <header className="sticky top-0 z-40 h-14 bg-[#0A0A0C]/95 backdrop-blur-md border-b border-[#D4AF37]/40 flex items-center justify-between px-3 sm:px-4 sm:px-6 shadow-[0_4px_20px_rgba(0,0,0,0.8)]">
+    <header className="sticky top-0 z-40 h-14 bg-[#070709]/95 backdrop-blur-md border-b border-[#D4AF37]/50 flex items-center justify-between px-3 sm:px-4 sm:px-6 shadow-[0_10px_35px_rgba(0,0,0,0.95)]">
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
@@ -22,10 +22,10 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
         </button>
 
         {/* Isotipo 3D "CL" */}
-        <div className="relative w-10 h-10 rounded-xl bg-gradient-to-br from-[#FFC700] via-[#D4AF37] to-[#805F13] p-[2px] shadow-[0_0_15px_rgba(255,199,0,0.35)] group">
-          <div className="w-full h-full bg-[#0A0A0C] rounded-[9px] flex items-center justify-center border border-[#FFC700]/30 relative overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/10 to-transparent pointer-events-none" />
-            <span className="text-[#FFC700] font-black text-xl tracking-tighter drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)]">
+        <div className="relative w-11 h-11 rounded-xl bg-gradient-to-br from-[#FFC700] via-[#D4AF37] to-[#805F13] p-[2px] shadow-[0_0_25px_rgba(255,199,0,0.5)] group-hover:shadow-[0_0_35px_rgba(255,199,0,0.85)] transition-all">
+          <div className="w-full h-full bg-[#070709] rounded-[10px] flex items-center justify-center border border-[#FFC700]/50 relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-tr from-transparent via-white/15 to-transparent pointer-events-none" />
+            <span className="text-[#FFC700] font-black text-2xl tracking-tighter drop-shadow-[0_2px_6px_rgba(0,0,0,0.95)]">
               CL
             </span>
           </div>
@@ -33,13 +33,13 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
 
         {/* Nombre y lema */}
         <div className="hidden sm:block">
-          <div className="flex items-center gap-1.5">
-            <h1 className="font-black text-lg text-white tracking-wider leading-none">
+          <div className="flex items-center gap-2">
+            <h1 className="font-black text-xl text-white tracking-wider leading-none drop-shadow">
               CashLeague
             </h1>
-            <span className="w-2 h-2 rounded-full bg-[#00FF66] shadow-[0_0_8px_#00FF66]" title="Servidor Activo" />
+            <span className="w-2.5 h-2.5 rounded-full bg-[#00FF66] shadow-[0_0_12px_#00FF66]" title="Servidores eSports Online" />
           </div>
-          <p className="text-[8px] text-[#D4AF37] font-extrabold tracking-[0.2em] uppercase mt-0.5 opacity-90">
+          <p className="text-[9px] text-[#D4AF37] font-extrabold tracking-[0.22em] uppercase mt-1">
             JUEGA. COMPITE. PERTENECE.
           </p>
         </div>
@@ -47,7 +47,7 @@ export default function TopNav({ onDepositClick, onProfileClick, onMenuClick }: 
 
       <div className="flex items-center gap-2 sm:gap-3">
         {currentUser && (
-          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#141418] border border-[#FFC700]/40 shadow-inner">
+          <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-[#14141C] border border-[#FFC700]/50 shadow-inner">
             <CreditCard size={16} className="text-[#FFC700]" />
             <div className="flex items-baseline gap-2">
               <span className="text-sm font-bold text-white tabular-nums">

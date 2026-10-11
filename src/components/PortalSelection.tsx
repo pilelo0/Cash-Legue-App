@@ -91,7 +91,7 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
         <img
           src={TOURNAMENT_BANNER_IMG}
           alt="Torneos Activos"
-          className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-105 transition duration-700"
+          className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-700"
         />
         <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-[#070709]/85 to-transparent" />
 
@@ -106,7 +106,7 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight">SALA DE TORNEOS ACTIVOS</h2>
-            <p className="text-xs text-[#FFC700] font-bold uppercase tracking-wide">Copas masivas y ligas con pozos acumulados</p>
+            <p className="text-xs text-[#FFC700] font-bold uppercase tracking-wide">FORTNITE • EA SPORTS FC 24 • VALORANT • ROCKET LEAGUE</p>
             <p className="text-xs text-neutral-300 leading-relaxed">Enfrentate a cientos de jugadores en llaves oficiales verificadas en tiempo real por la IA de Cash League.</p>
           </div>
 
@@ -132,9 +132,9 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
         {/* SALA GAMING */}
         <button
           onClick={() => onSelectSala('gaming')}
-          className="relative bg-[#14141C] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group gold-border-glow flex flex-col justify-between h-72 text-left"
+          className="relative bg-[#14141C] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group gold-border-glow flex flex-col justify-between h-80 text-left"
         >
-          <img src={GAMING_SALA_IMG} alt="Sala Gaming" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-500" />
+          <img src={GAMING_SALA_IMG} alt="Sala Gaming" className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:scale-105 transition duration-500" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/80 to-transparent" />
 
           <div className="relative z-10 flex justify-between items-start">
@@ -148,8 +148,8 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
 
           <div className="relative z-10 space-y-2 mt-auto">
             <h3 className="text-xl sm:text-2xl font-black text-white">SALA GAMING</h3>
-            <p className="text-xs text-[#00E676] font-bold uppercase tracking-wide">eSports & Competitivo 1v1</p>
-            <p className="text-xs text-neutral-300">Rocket League, Fortnite, Valorant, EA FC y mas. Duelos con saldo real.</p>
+            <p className="text-xs text-[#00E676] font-bold uppercase tracking-wider">Fortnite • Rocket League • Valorant • EA FC 24</p>
+            <p className="text-xs text-neutral-300">Desafios directos en partidas individuales o por equipos con saldo real garantizado.</p>
             <div className="flex justify-between items-center pt-2">
               <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-3">
                 <span className="flex items-center gap-1"><Trophy size={11} className="text-[#FFC700]" /> 6 Juegos</span>
@@ -165,9 +165,9 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
         {/* SALA DESTREZA */}
         <button
           onClick={() => onSelectSala('destreza')}
-          className="relative bg-[#14141C] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group gold-border-glow flex flex-col justify-between h-72 text-left"
+          className="relative bg-[#14141C] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group gold-border-glow flex flex-col justify-between h-80 text-left"
         >
-          <img src={DESTREZA_SALA_IMG} alt="Sala Destreza" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-500" />
+          <img src={DESTREZA_SALA_IMG} alt="Sala Destreza" className="absolute inset-0 w-full h-full object-cover opacity-45 group-hover:scale-105 transition duration-500" />
           <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/80 to-transparent" />
 
           <div className="relative z-10 flex justify-between items-start">
@@ -181,8 +181,8 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
 
           <div className="relative z-10 space-y-2 mt-auto">
             <h3 className="text-xl sm:text-2xl font-black text-white">SALA DESTREZA</h3>
-            <p className="text-xs text-[#FFC700] font-bold uppercase tracking-wide">Mente, Trivias & Estrategia</p>
-            <p className="text-xs text-neutral-300">Ajedrez 3D, Damas, Sudoku, Trivias Masivas y Duelos de Cartas.</p>
+            <p className="text-xs text-[#FFC700] font-bold uppercase tracking-wider">Ajedrez 3D • Damas • Sudoku • Trivias</p>
+            <p className="text-xs text-neutral-300">Demuestra tu inteligencia tactica en duelos rapidos y torneos masivos de estrategia.</p>
             <div className="flex justify-between items-center pt-2">
               <span className="text-[10px] text-neutral-400 font-bold flex items-center gap-3">
                 <span className="flex items-center gap-1"><Trophy size={11} className="text-[#FFC700]" /> 5 Disciplinas</span>

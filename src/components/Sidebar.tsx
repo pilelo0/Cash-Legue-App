@@ -22,7 +22,7 @@ export default function Sidebar({ currentView, onNavigate, collapsed, onToggleCo
     <aside
       className={`${
         collapsed ? 'w-16' : 'w-60'
-      } shrink-0 border-r border-neutral-800 bg-[#0F0F12] transition-all duration-300 flex flex-col sticky top-14 h-[calc(100vh-3.5rem)] z-30`}
+      } shrink-0 border-r border-[#D4AF37]/25 bg-[#070709]/85 backdrop-blur-md transition-all duration-300 flex flex-col sticky top-14 h-[calc(100vh-3.5rem)] z-30`}
     >
       <nav className="flex-1 overflow-y-auto py-3">
         {NAV_ITEMS.map((item) => {
