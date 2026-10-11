@@ -87,18 +87,18 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
   return (
     <div className="space-y-8">
       {/* 1. FULL-WIDTH TOURNAMENT BANNER */}
-      <div className="relative bg-gradient-to-r from-[#141418] via-[#1A1A24] to-[#0A0A0C] border-2 border-[#D4AF37] rounded-2xl p-6 sm:p-8 overflow-hidden group shadow-2xl">
+      <div className="relative bg-gradient-to-r from-[#14141C] via-[#1A1A26] to-[#0A0A0E] border-2 border-[#D4AF37] rounded-2xl p-6 sm:p-8 overflow-hidden group gold-border-glow">
         <img
           src={TOURNAMENT_BANNER_IMG}
           alt="Torneos Activos"
           className="absolute inset-0 w-full h-full object-cover opacity-20 group-hover:scale-105 transition duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0A0A0C] via-[#0A0A0C]/80 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-[#070709]/85 to-transparent" />
 
         <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-xl bg-[#FFC700]/10 border border-[#FFC700] flex items-center justify-center">
+              <div className="w-12 h-12 rounded-xl bg-[#FFC700]/15 border border-[#FFC700] flex items-center justify-center shadow-[0_0_10px_rgba(255,199,0,0.3)]">
                 <Crown size={24} className="text-[#FFC700]" />
               </div>
               <span className="bg-[#FFC700] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
@@ -110,7 +110,7 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
             <p className="text-xs text-neutral-300 leading-relaxed">Enfrentate a cientos de jugadores en llaves oficiales verificadas en tiempo real por la IA de Cash League.</p>
           </div>
 
-          <div className="bg-[#0A0A0C]/90 border border-[#D4AF37]/50 backdrop-blur-md p-5 rounded-2xl flex flex-col items-end gap-3 min-w-[240px]">
+          <div className="bg-[#070709]/95 border border-[#D4AF37]/60 backdrop-blur-md p-5 rounded-2xl flex flex-col items-end gap-3 min-w-[240px] shadow-2xl">
             <div className="text-right">
               <p className="text-[10px] text-neutral-400 font-bold uppercase">Pozo Total en Juego</p>
               <p className="text-2xl sm:text-3xl font-black text-[#FFC700]">
@@ -132,13 +132,13 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
         {/* SALA GAMING */}
         <button
           onClick={() => onSelectSala('gaming')}
-          className="relative bg-[#141418] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group shadow-xl flex flex-col justify-between h-72 text-left"
+          className="relative bg-[#14141C] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group gold-border-glow flex flex-col justify-between h-72 text-left"
         >
-          <img src={GAMING_SALA_IMG} alt="Sala Gaming" className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition duration-500" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/80 to-transparent" />
+          <img src={GAMING_SALA_IMG} alt="Sala Gaming" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/80 to-transparent" />
 
           <div className="relative z-10 flex justify-between items-start">
-            <div className="w-12 h-12 rounded-xl bg-[#00E676]/10 border border-[#00E676] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#00E676]/15 border border-[#00E676] flex items-center justify-center shadow-[0_0_10px_rgba(0,230,118,0.3)]">
               <Swords size={24} className="text-[#00E676]" />
             </div>
             <span className="bg-[#00E676] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">
@@ -165,13 +165,13 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
         {/* SALA DESTREZA */}
         <button
           onClick={() => onSelectSala('destreza')}
-          className="relative bg-[#141418] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group shadow-xl flex flex-col justify-between h-72 text-left"
+          className="relative bg-[#14141C] border-2 border-[#D4AF37] rounded-2xl p-6 overflow-hidden group gold-border-glow flex flex-col justify-between h-72 text-left"
         >
-          <img src={DESTREZA_SALA_IMG} alt="Sala Destreza" className="absolute inset-0 w-full h-full object-cover opacity-25 group-hover:scale-105 transition duration-500" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A0A0C] via-[#0A0A0C]/80 to-transparent" />
+          <img src={DESTREZA_SALA_IMG} alt="Sala Destreza" className="absolute inset-0 w-full h-full object-cover opacity-40 group-hover:scale-105 transition duration-500" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#070709] via-[#070709]/80 to-transparent" />
 
           <div className="relative z-10 flex justify-between items-start">
-            <div className="w-12 h-12 rounded-xl bg-[#FFC700]/10 border border-[#FFC700] flex items-center justify-center">
+            <div className="w-12 h-12 rounded-xl bg-[#FFC700]/15 border border-[#FFC700] flex items-center justify-center shadow-[0_0_10px_rgba(255,199,0,0.3)]">
               <Brain size={24} className="text-[#FFC700]" />
             </div>
             <span className="bg-[#FFC700] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider">

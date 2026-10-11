@@ -1,6 +1,13 @@
 import { useState, useRef, useEffect } from 'react';
 import { Bot, X, Send } from 'lucide-react';
 
+const SPEECH_TIPS = [
+  'Necesitas ayuda? Preguntame por tu ranking o ganancias.',
+  'Revisa los torneos activos en la pantalla principal!',
+  'Tu boveda esta segura con contratos inteligentes.',
+  'Nuevo en Cash League? Elige tu Arena y comienza a competir.',
+];
+
 interface Message {
   sender: 'bot' | 'user';
   text: string;
@@ -26,6 +33,18 @@ export default function BlockyAI({ officialStats }: BlockyAIProps) {
   ]);
   const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [showBubble, setShowBubble] = useState(true);
+  const [tipIdx, setTipIdx] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTipIdx((prev) => (prev + 1) % SPEECH_TIPS.length);
+      setShowBubble(true);
+      const hideTimer = setTimeout(() => setShowBubble(false), 5000);
+      return () => clearTimeout(hideTimer);
+    }, 8000);
+    return () => clearInterval(interval);
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -112,9 +131,9 @@ export default function BlockyAI({ officialStats }: BlockyAIProps) {
       )}
 
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className="relative w-20 h-20 rounded-full bg-[#0A0A0C] border-2 border-[#FFC700] p-1 shadow-2xl hover:scale-105 flex items-center justify-center group transition-transform"
-        style={{ animation: 'blockyFloat 3.5s ease-in-out infinite' }}
+        onClick={() => { setIsOpen(!isOpen); setShowBubble(false); }}
+        className="relative w-20 h-20 rounded-full bg-[#0A0A0C] border-2 border-[#FFC700] p-1 shadow-2xl hover:scale-105 flex items-center justify-center group transition-transform blocky-super-glow"
+        style={{ animation: 'blockyFloat 3.5s ease-in-out infinite, pulseGlow 2.5s infinite ease-in-out' }}
       >
         <div className="absolute inset-0 rounded-full bg-[#FFC700]/20 blur-md group-hover:blur-lg transition-all" />
         <div className="w-full h-full rounded-full bg-gradient-to-br from-[#1A1A24] to-[#0A0A0C] flex flex-col items-center justify-center relative z-10 border border-[#FFC700]/40">
@@ -123,6 +142,14 @@ export default function BlockyAI({ officialStats }: BlockyAIProps) {
         </div>
         <span className="absolute bottom-0 right-0 w-4 h-4 bg-green-500 border-2 border-[#0A0A0C] rounded-full z-20" />
       </button>
+
+      {showBubble && !isOpen && (
+        <div className="absolute bottom-6 right-24 w-56 bg-[#14141C] border border-[#FFC700]/50 rounded-2xl p-3 shadow-xl pointer-events-none">
+          <div className="absolute right-[-8px] bottom-6 w-4 h-4 bg-[#14141C] border-r border-b border-[#FFC700]/50 rotate-[-45deg]" />
+          <p className="text-[10px] text-[#FFC700] font-bold uppercase tracking-wider mb-1">Blocky dice:</p>
+          <p className="text-xs text-white leading-relaxed">{SPEECH_TIPS[tipIdx]}</p>
+        </div>
+      )}
     </div>
   );
 }

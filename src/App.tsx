@@ -64,7 +64,7 @@ function AppContent() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F0F12] text-white">
+    <div className="min-h-screen luxury-bg-texture text-white">
       <TopNav
         onDepositClick={() => setShowDeposit(true)}
         onProfileClick={handleProfileClick}
