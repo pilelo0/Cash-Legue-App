@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { AppProvider, useApp } from '@/lib/store';
 import TopNav from '@/components/TopNav';
 import Sidebar, { ViewKey } from '@/components/Sidebar';
@@ -11,7 +11,7 @@ import GamerProfile from '@/views/GamerProfile';
 import DepositModal from '@/components/DepositModal';
 import BlockyAI from '@/components/BlockyAI';
 import { formatUSD } from '@/lib/types';
-import { Loader2 } from 'lucide-react';
+import { Loader2, ArrowLeft } from 'lucide-react';
 
 function AppContent() {
   const { loading, currentUser } = useApp();
@@ -19,10 +19,25 @@ function AppContent() {
   const [collapsed, setCollapsed] = useState(false);
   const [activeMatch, setActiveMatch] = useState<string | null>(null);
   const [showDeposit, setShowDeposit] = useState(false);
+  const viewHistory = useRef<ViewKey[]>([]);
 
   const handleNavigate = (v: ViewKey) => {
+    viewHistory.current.push(view);
     setActiveMatch(null);
     setView(v);
+  };
+
+  const handleGoBack = () => {
+    if (activeMatch) {
+      setActiveMatch(null);
+      return;
+    }
+    const prev = viewHistory.current.pop();
+    if (prev) {
+      setView(prev);
+    } else {
+      setView('lobby');
+    }
   };
 
   const handleProfileClick = () => {
@@ -31,6 +46,7 @@ function AppContent() {
   };
 
   const handleEnterMatch = (partidaId: string) => {
+    viewHistory.current.push(view);
     setActiveMatch(partidaId);
   };
 
@@ -62,6 +78,17 @@ function AppContent() {
           onToggleCollapse={() => setCollapsed(!collapsed)}
         />
         <main className={`flex-1 min-w-0 overflow-x-hidden ${view === 'perfil' ? '' : 'p-4 sm:p-6 lg:p-8'}`}>
+          <div className="flex items-center justify-between pb-4 mb-2">
+            <button
+              onClick={handleGoBack}
+              className="back-nav-btn px-4 py-2 rounded-xl text-xs font-extrabold flex items-center gap-2"
+            >
+              <ArrowLeft size={14} /> Volver
+            </button>
+            <span className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">
+              {activeMatch ? 'Sala de Partida' : view === 'lobby' ? 'Panel de Salas' : view === 'perfil' ? 'Perfil Gamer' : view === 'mis-partidas' ? 'Mis Partidas' : view === 'historial' ? 'Historial' : view === 'depositos' ? 'Depositos / Retiros' : ''}
+            </span>
+          </div>
           {activeMatch ? (
             <Matchroom partidaId={activeMatch} onBack={handleBackFromMatch} />
           ) : view === 'lobby' ? (

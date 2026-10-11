@@ -74,6 +74,20 @@ body {
   transform: translateY(-50%) scale(1.12);
 }
 
+.back-nav-btn {
+  background: rgba(20, 20, 24, 0.9);
+  border: 1.5px solid #FFC700;
+  color: #FFC700;
+  box-shadow: 0 0 12px rgba(255, 199, 0, 0.3);
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.back-nav-btn:hover {
+  background: #FFC700;
+  color: #0A0A0C;
+  box-shadow: 0 0 22px rgba(255, 199, 0, 0.8);
+  transform: translateX(-3px);
+}
+
 .gold-btn {
   background: linear-gradient(135deg, #FFC700 0%, #D4AF37 100%);
   color: #0A0A0C;

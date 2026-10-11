@@ -196,9 +196,16 @@ export default function Lobby({ onEnterMatch }: LobbyProps) {
 
   return (
     <div className="relative min-h-full">
-      {/* Breadcrumb */}
+      {/* Breadcrumb con boton Volver dorado */}
       {level !== 'portals' && (
-        <div className="flex items-center gap-2 mb-5 text-sm">
+        <div className="flex items-center gap-3 mb-5 text-sm">
+          <button
+            onClick={handleBackToPortals}
+            className="back-nav-btn px-3 py-1.5 rounded-lg text-xs font-extrabold flex items-center gap-1.5"
+          >
+            <ArrowLeft size={14} /> Volver
+          </button>
+          <span className="text-neutral-700">|</span>
           <button
             onClick={handleBackToPortals}
             className={`flex items-center gap-1 transition-colors ${
