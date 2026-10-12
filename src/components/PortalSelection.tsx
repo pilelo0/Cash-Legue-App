@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { Crown, Swords, Brain, ArrowRight, Users, Trophy, Zap, Radio, Eye, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Crown, Swords, Brain, ArrowRight, Users, Trophy, Zap, Radio, Eye, Play, ChevronLeft, ChevronRight, Gamepad2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import type { SalaKey, GameMeta, Torneo } from '@/lib/types';
 import { formatCLP } from '@/lib/types';
@@ -8,6 +8,7 @@ import LeaderboardWidget from '@/components/LeaderboardWidget';
 interface PortalSelectionProps {
   onSelectSala: (sala: SalaKey) => void;
   onSelectGame: (game: GameMeta) => void;
+  onEnterArena: () => void;
 }
 
 const PROMOTED_STREAMS = [
@@ -52,8 +53,9 @@ const PROMOTED_STREAMS = [
 const TOURNAMENT_BANNER_IMG = 'https://images.pexels.com/photos/14266493/pexels-photo-14266493.jpeg?auto=compress&cs=tinysrgb&h=650&w=1400';
 const GAMING_SALA_IMG = 'https://images.pexels.com/photos/9072336/pexels-photo-9072336.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
 const DESTREZA_SALA_IMG = 'https://images.pexels.com/photos/4800923/pexels-photo-4800923.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+const ARENA_RL_IMG = 'https://images.pexels.com/photos/25637489/pexels-photo-25637489.jpeg?auto=compress&cs=tinysrgb&h=650&w=1400';
 
-export default function PortalSelection({ onSelectSala }: PortalSelectionProps) {
+export default function PortalSelection({ onSelectSala, onEnterArena }: PortalSelectionProps) {
   const [tournaments, setTournaments] = useState<Torneo[]>([]);
   const streamRef = useRef<HTMLDivElement>(null);
 
@@ -127,7 +129,39 @@ export default function PortalSelection({ onSelectSala }: PortalSelectionProps) 
         </div>
       </div>
 
-      {/* 2. TWO-COLUMN: SALA GAMING + SALA DESTREZA */}
+      {/* 2. ARENA 3D ROCKET LEAGUE CL BANNER */}
+      <div className="relative bg-gradient-to-r from-[#14141C] via-[#1A1A26] to-[#0A0A0E] border-2 border-[#00E676]/60 rounded-2xl p-6 sm:p-8 overflow-hidden group gold-border-glow">
+        <img
+          src={ARENA_RL_IMG}
+          alt="Rocket League CL Arena 3D"
+          className="absolute inset-0 w-full h-full object-cover opacity-35 group-hover:scale-105 transition duration-700"
+        />
+        <div className="absolute inset-0 bg-gradient-to-r from-[#070709] via-[#070709]/85 to-transparent" />
+
+        <div className="relative z-10 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+          <div className="space-y-2 max-w-2xl">
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-xl bg-[#00E676]/15 border border-[#00E676] flex items-center justify-center shadow-[0_0_12px_rgba(0,230,118,0.35)]">
+                <Gamepad2 size={24} className="text-[#00E676]" />
+              </div>
+              <span className="bg-[#00E676] text-black text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-wider shadow-md">
+                MODO PROPIO NATIVO CL
+              </span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight drop-shadow-md">ROCKET LEAGUE CL (ARENA 3D)</h2>
+            <p className="text-xs text-neutral-300 leading-relaxed">Entra a la arena interactiva de fisicas reales, conduce tu vehiculo y anota goles contra rivales.</p>
+          </div>
+
+          <button
+            onClick={onEnterArena}
+            className="green-gold-btn py-3 px-6 rounded-xl text-xs uppercase tracking-wider font-black flex items-center justify-center gap-2 whitespace-nowrap"
+          >
+            Jugar Arena 3D <ArrowRight size={14} />
+          </button>
+        </div>
+      </div>
+
+      {/* 3. TWO-COLUMN: SALA GAMING + SALA DESTREZA */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* SALA GAMING */}
         <button

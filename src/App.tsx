@@ -8,6 +8,7 @@ import MisPartidas from '@/views/MisPartidas';
 import Historial from '@/views/Historial';
 import Depositos from '@/views/Depositos';
 import GamerProfile from '@/views/GamerProfile';
+import RocketLeagueArena from '@/views/RocketLeagueArena';
 import DepositModal from '@/components/DepositModal';
 import BlockyAI from '@/components/BlockyAI';
 import { formatUSD } from '@/lib/types';
@@ -86,7 +87,7 @@ function AppContent() {
               <ArrowLeft size={14} /> Volver
             </button>
             <span className="text-xs text-neutral-500 font-semibold uppercase tracking-wider">
-              {activeMatch ? 'Sala de Partida' : view === 'lobby' ? 'Panel de Salas' : view === 'perfil' ? 'Perfil Gamer' : view === 'mis-partidas' ? 'Mis Partidas' : view === 'historial' ? 'Historial' : view === 'depositos' ? 'Depositos / Retiros' : ''}
+              {activeMatch ? 'Sala de Partida' : view === 'lobby' ? 'Panel de Salas' : view === 'perfil' ? 'Perfil Gamer' : view === 'mis-partidas' ? 'Mis Partidas' : view === 'historial' ? 'Historial' : view === 'depositos' ? 'Depositos / Retiros' : view === 'arena' ? 'Arena 3D Nativa' : ''}
             </span>
           </div>
           {activeMatch ? (
@@ -101,6 +102,8 @@ function AppContent() {
             <Depositos />
           ) : view === 'perfil' ? (
             <GamerProfile />
+          ) : view === 'arena' ? (
+            <RocketLeagueArena />
           ) : null}
         </main>
       </div>

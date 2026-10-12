@@ -1,6 +1,6 @@
 import { Home, Gamepad2, History, Wallet, ChevronLeft, ChevronRight, Trophy, Swords, Brain, UserCircle } from 'lucide-react';
 
-export type ViewKey = 'lobby' | 'mis-partidas' | 'historial' | 'depositos' | 'perfil';
+export type ViewKey = 'lobby' | 'mis-partidas' | 'historial' | 'depositos' | 'perfil' | 'arena';
 
 interface SidebarProps {
   currentView: ViewKey;
@@ -11,7 +11,8 @@ interface SidebarProps {
 
 const NAV_ITEMS: { key: ViewKey; label: string; icon: typeof Home }[] = [
   { key: 'lobby', label: 'Salas', icon: Home },
-  { key: 'mis-partidas', label: 'Mis Partidas', icon: Gamepad2 },
+  { key: 'arena', label: 'Arena Rocket League CL', icon: Gamepad2 },
+  { key: 'mis-partidas', label: 'Mis Partidas', icon: Trophy },
   { key: 'historial', label: 'Historial', icon: History },
   { key: 'depositos', label: 'Depositos / Retiros', icon: Wallet },
   { key: 'perfil', label: 'Mi Perfil Gamer', icon: UserCircle },
